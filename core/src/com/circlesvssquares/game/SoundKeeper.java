@@ -32,6 +32,9 @@ public class SoundKeeper implements Disposable {
     private Music chainsaw;
     private Sound smallShooting;
     private Sound bigShooting;
+    private Sound bigUnitDeath;
+    private Sound smallUnitDeath;
+    private Sound upgradeBuilding;
 
     private long lastSmallShootingTime = TimeUtils.nanoTime();
     private long lastBigShootingTime = TimeUtils.nanoTime();
@@ -67,19 +70,42 @@ public class SoundKeeper implements Disposable {
         }
 
         smallShooting = Gdx.audio.newSound(
-            Gdx.files.internal("sounds/small_shooting.wav"));
+            Gdx.files.internal("sounds/small_shooting.wav")
+        );
         bigShooting = Gdx.audio.newSound(
-            Gdx.files.internal("sounds/big_shooting.wav"));
+            Gdx.files.internal("sounds/big_shooting.wav")
+        );
         moreGold = Gdx.audio.newMusic(
             Gdx.files.internal("sounds/need_more_gold.mp3")
         );
         chainsaw = Gdx.audio.newMusic(
             Gdx.files.internal("sounds/chainsaw.mp3")
         );
+        smallUnitDeath = Gdx.audio.newSound(
+            Gdx.files.internal("sounds/small_unit_dying.wav")
+        );
+        bigUnitDeath = Gdx.audio.newSound(
+            Gdx.files.internal("sounds/big_unit_dying.wav")
+        );
+        upgradeBuilding = Gdx.audio.newSound(
+            Gdx.files.internal("sounds/upgrade_building.wav")
+        );
     }
 
     public static SoundKeeper getInstance() {
         return instance;
+    }
+
+    public void playUpgradeBuilding() {
+        upgradeBuilding.play();
+    }
+
+    public void playUnitDeath(UnitBase unit) {
+        if (unit instanceof SmallUnitParams) {
+            smallUnitDeath.play();
+        } else {
+            bigUnitDeath.play();
+        }
     }
 
     public void playShooting(UnitBase unit) {
@@ -132,10 +158,10 @@ public class SoundKeeper implements Disposable {
     }
 
     public void playSmallCircleCapture() {
-        if (!isUnitSoundPlaying()) {
+        //if (!isUnitSoundPlaying()) {
             smallCircleCapture.get(
                 generator.nextInt(smallCircleCapture.size)).play();
-        }
+        //}
     }
 
     public void playSmallCircleDestroyed() {
@@ -185,6 +211,9 @@ public class SoundKeeper implements Disposable {
         bigShooting.dispose();
         moreGold.dispose();
         chainsaw.dispose();
+        upgradeBuilding.dispose();
+        bigUnitDeath.dispose();
+        smallUnitDeath.dispose();
     }
 
     private boolean isUnitSoundPlaying() {

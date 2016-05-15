@@ -5,9 +5,7 @@ import com.circlesvssquares.game.GameScreen;
 import com.circlesvssquares.game.Level;
 import com.circlesvssquares.game.game_objects.GameObject;
 import com.circlesvssquares.game.game_objects.Party;
-import com.circlesvssquares.game.game_objects.buildings.BuildingBase;
-import com.circlesvssquares.game.game_objects.buildings.MainBase;
-import com.circlesvssquares.game.game_objects.buildings.Mine;
+import com.circlesvssquares.game.game_objects.buildings.*;
 import com.circlesvssquares.game.game_objects.units.UnitBase;
 
 import java.io.IOException;
@@ -19,21 +17,27 @@ import java.util.Random;
 /**
  * Created by maximka on 1.5.16.
  */
+
 public class ComputerPlayer extends Player {
     private static final boolean __DEBUG__ = false;
-    transient private ArrayList<BuildingBase> buildings;
-    transient private LinkedList<UnitBase> units = new LinkedList<UnitBase>();
-    transient private Vector3 touchPosition = new Vector3(0, 0, 0);
 
-    transient private Random generator = new Random();
+    transient private ArrayList<BuildingBase> buildings;
+    transient private LinkedList<UnitBase> units;
+    transient private Vector3 touchPosition;
+    transient private Random generator;
 
     public ComputerPlayer(Party party, Level level) {
         super(party, level);
+        init();
     }
 
     private void readObject(ObjectInputStream in) throws IOException,
                                                     ClassNotFoundException {
         in.defaultReadObject();
+        init();
+    }
+
+    private void init() {
         units = new LinkedList<UnitBase>();
         touchPosition = new Vector3(0, 0, 0);
         generator = new Random();
@@ -48,7 +52,7 @@ public class ComputerPlayer extends Player {
 
     public void makeInput(){
         if (!__DEBUG__) {
-            if (money >= 100) {
+            if (money >= MIN_PRICE) {
                 buildings = level.getBuildings();
                 units.clear();
                 units.addAll(level.getUnitsOnField());
@@ -56,12 +60,13 @@ public class ComputerPlayer extends Player {
                 tryProtectBase();
                 tryProtectMyBuildings();
                 if (generator.nextDouble() < 0.01) {
-                    tryCaptureBuildings();
+                    if (generator.nextDouble() < 0.05) {
+                        randomTouch();
+                    } else {
+                        tryCaptureBuildings();
+                    }
                 } else {
                     tryUpgradeBuildings();
-                }
-                if (generator.nextDouble() < 0.01) {
-                    randomTouch();
                 }
             }
         }
@@ -74,9 +79,6 @@ public class ComputerPlayer extends Player {
                     touchPosition.x = unit.getCenter().x;
                     touchPosition.y = unit.getCenter().y;
                     processInput(touchPosition, GameScreen.RIGHT_BOARD);
-
-                    // return;
-                    // TODO
                 }
             }
         }
@@ -99,8 +101,8 @@ public class ComputerPlayer extends Player {
     }
 
     private void tryCaptureBuildings() {
+        // TODO: choose building according to distance?
         for (BuildingBase building: buildings) {
-            // TODO: treeset!
             if (building.getParty() == Party.NEUTRAL ||
                     building.getParty() == Party.NONE) {
                 if (building.getCenter().x > GameScreen.RIGHT_BOARD / 2 + 200) {
@@ -113,6 +115,8 @@ public class ComputerPlayer extends Player {
     }
 
     private void tryUpgradeBuildings() {
+        Tower tower = null;
+
         for (BuildingBase building: buildings) {
             if (building.getParty() == party) {
                 if (building instanceof MainBase ||
@@ -120,11 +124,24 @@ public class ComputerPlayer extends Player {
                     touchPosition.x = building.getCenter().x;
                     touchPosition.y = building.getCenter().y;
                     processInput(touchPosition, GameScreen.RIGHT_BOARD);
+                }
 
-                    // return;
-                    // TODO
+                if (building instanceof SupportTower) {
+                    if (tower == null) {
+                        tower = (Tower)building;
+                    } else {
+                        if (building.getBuildingLevel() < tower.getBuildingLevel()) {
+                            tower = (Tower)building;
+                        }
+                    }
                 }
             }
+        }
+
+        if (tower != null && generator.nextDouble() < 0.005) {
+            touchPosition.x = tower.getCenter().x;
+            touchPosition.y = tower.getCenter().y;
+            processInput(touchPosition, GameScreen.RIGHT_BOARD);
         }
     }
 

@@ -8,12 +8,13 @@ import com.badlogic.gdx.math.Vector3;
 /**
  * Created by maximka on 17.4.16.
  */
+
 public class MyInputProcessor implements InputProcessor {
-    final OrthographicCamera camera;
-    final GameScreen screen;
-    final float CAMERA_OFFSET;
-    final float FIELD_WIDTH;
-    final float SCROLL_SPEED = 100f;
+    private final OrthographicCamera camera;
+    private final GameScreen screen;
+    private final float CAMERA_OFFSET;
+    private final float FIELD_WIDTH;
+    private final float SCROLL_SPEED = 100f;
 
     private Vector3 touchPos = new Vector3();
 
@@ -47,11 +48,9 @@ public class MyInputProcessor implements InputProcessor {
         camera.unproject(touchPos);
 
         if (button == Input.Buttons.LEFT) {
-            //screen.leftClick(touchPos);
             GameScreen.getCirclesPlayer().processInput(touchPos);
             return true;
         } else if (button == Input.Buttons.RIGHT) {
-            // screen.rightClick(touchPos);
             GameScreen.getSquaresPlayer().processInput(touchPos);
             return true;
         }
@@ -96,6 +95,6 @@ public class MyInputProcessor implements InputProcessor {
             }
         }
 
-        return false;
+        return true;
     }
 }

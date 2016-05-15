@@ -12,7 +12,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-
 public class MenuScreen implements Screen {
     final float LEFT_MARGIN = 340f;
     final float TOP_MARGIN = 500f;

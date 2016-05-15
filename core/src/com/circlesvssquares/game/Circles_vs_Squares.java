@@ -3,7 +3,6 @@ package com.circlesvssquares.game;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Screen;
 
-
 public class Circles_vs_Squares extends Game {
     private GameState state;
     private GameScreen gameScreen;
@@ -18,9 +17,6 @@ public class Circles_vs_Squares extends Game {
     }
 
     public void create() {
-//        state = GameState.START_MENU;
-//        menuScreen = new MenuScreen(this);
-//        gameScreen = new GameScreen(this);
         setScreen(new StartScreen(this));
     }
 

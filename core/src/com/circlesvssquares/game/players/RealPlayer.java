@@ -8,6 +8,7 @@ import com.circlesvssquares.game.game_objects.Party;
 /**
  * Created by maximka on 1.5.16.
  */
+
 public class RealPlayer extends Player {
     public RealPlayer(Party party, Level level) {
         super(party, level);

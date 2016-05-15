@@ -5,6 +5,7 @@ import java.util.NoSuchElementException;
 /**
  * Created by maximKa on 24.02.16.
  */
+
 public class Stack<T> {
     private T[] stack;
     private int size = 0;

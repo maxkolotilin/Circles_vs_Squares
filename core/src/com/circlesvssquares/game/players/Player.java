@@ -14,16 +14,19 @@ import java.io.Serializable;
 /**
  * Created by maximka on 1.5.16.
  */
+
 public abstract class Player implements Serializable {
     private static final int START_MONEY = 100;
+    private static final int MAX_MONEY = 1000;
     private static final int SMALL_UNIT_PRICE = 100;
     private static final int BIG_UNIT_PRICE = 500;
     private static final int BUILDING_EXTEND_PRICE = 150;
     private static final int MAX_BUILDING_LEVEL = 3;
+    protected static final int MIN_PRICE = SMALL_UNIT_PRICE;
+
     transient protected Level level;
     protected double money = 0;
     protected Party party;
-
 
     public Player(Party party, Level level) {
         this.party = party;
@@ -49,6 +52,9 @@ public abstract class Player implements Serializable {
 
     public void addMoney(double amount) {
         money += amount;
+        if (money > MAX_MONEY) {
+            money = MAX_MONEY;
+        }
     }
 
     public boolean spendMoney(double amount) {
@@ -67,6 +73,7 @@ public abstract class Player implements Serializable {
                 int buildingLevel = touchedBuilding.getBuildingLevel();
                 if (buildingLevel < MAX_BUILDING_LEVEL) {
                     if (spendMoney(BUILDING_EXTEND_PRICE * buildingLevel)) {
+                        SoundKeeper.getInstance().playUpgradeBuilding();
                         touchedBuilding.setBuildingLevel(buildingLevel + 1);
                     } else if (this instanceof RealPlayer) {
                         SoundKeeper.getInstance().playMoreGold();

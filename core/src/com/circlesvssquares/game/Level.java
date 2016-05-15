@@ -56,7 +56,6 @@ public class Level {
     transient private Array<Sprite> blood = new Array<Sprite>();
     transient private Random generator = new Random();
 
-
     public Level(float fieldWidth) {
         this.fieldWidth = fieldWidth;
 
@@ -67,13 +66,12 @@ public class Level {
             bigSquaresPool.Push(new BigSquareUnit());
         }
 
-
         unitsOnField = new LinkedList<UnitBase>();
         buildings = new ArrayList<BuildingBase>();
+        initBuildings();
+    }
 
-        // TODO
-        // init buildings
-
+    public void initBuildings() {
         MainBase b = new MainBase();
         b.setPosition(20, 200);
         b.setNativeParty(Party.CIRCLES);
@@ -139,10 +137,6 @@ public class Level {
         buildings.add(f);
 
         DefenseTower dt = new DefenseTower();
-//        dt.setPosition(120 + fieldWidth / 2 - 24, 376);
-//        dt.setBuildingLevel(3);
-//        buildings.add(dt);
-//        dt = new DefenseTower();
         dt.setPosition(120 + fieldWidth / 2 - 24, 180);
         dt.setBuildingLevel(3);
         buildings.add(dt);
@@ -192,7 +186,6 @@ public class Level {
         dt.setHP(10);
         buildings.add(dt);
 
-
         SupportTower st = new SupportTower();
         st.setPosition(560, 376);
         st.setBuildingLevel(1);
@@ -215,8 +208,7 @@ public class Level {
         buildings.add(st);
     }
 
-    public Level() {
-    }
+    public Level() { }
 
     public ArrayList<BuildingBase> getBuildings() {
         return buildings;
@@ -261,8 +253,8 @@ public class Level {
                 GameObject target = ((DefenseTower) building).getInteractionTarget();
                 if (target != null && !target.isAlive()) {
                     ((DefenseTower) building).setInteractionTarget(null);
-                    ((DefenseTower) building).setDamageRatio(1);
                 }
+                ((DefenseTower) building).setDamageRatio(1);
             }
         }
     }
@@ -282,7 +274,7 @@ public class Level {
                 }
             }
 
-            if (unit.getInteractionTarget() == null) {      // TODO
+            if (unit.getInteractionTarget() == null) {
                 // search for buildings
                 for (BuildingBase building : buildings) {
                     if (unit.getParty() != building.getParty() &&
@@ -316,8 +308,6 @@ public class Level {
                     if (tower.isInSupportArea(unit) &&
                             unit.getParty() == tower.getParty()) {
                         unit.setDamageRatio(tower.getSupportRatio());
-                    } else {
-                        // unit.setDamageRatio(1);
                     }
                 }
                 for (BuildingBase _building : buildings) {
@@ -326,8 +316,6 @@ public class Level {
                         if (tower.isInSupportArea(_building) &&
                                 _building.getParty() == tower.getParty()) {
                             ((DefenseTower) _building).setDamageRatio(tower.getSupportRatio());
-                        } else {
-                            // ((DefenseTower) _building).setDamageRatio(1);
                         }
                     }
                 }
@@ -349,7 +337,6 @@ public class Level {
                     }
                 }
 
-
                 if (tower.getInteractionTarget() == null) {
                     // search for buildings
                     for (BuildingBase _building : buildings) {
@@ -357,11 +344,6 @@ public class Level {
                                 _building.getParty() != Party.NONE &&
                                 tower.isInViewArea(_building)) {
                             tower.setInteractionTarget(_building);
-
-//                            if (_building.isAlive() && (building.getParty() != Party.NONE ||
-//                                building.getCaptureParty() != unit.getParty())) {
-//                                unit.setInteraction(UnitAttack.getInstance());
-//                            break;
                         }
                     }
                 }
@@ -456,6 +438,8 @@ public class Level {
             if (!unit.isAlive()) {
                 iter.remove();
 
+                SoundKeeper.getInstance().playUnitDeath(unit);
+
                 Texture bloodTexture = TextureKeeper.getInstance().getBloodTexture(unit);
                 Sprite bloodSprite = new Sprite(bloodTexture,
                     bloodTexture.getWidth(), bloodTexture.getHeight());
@@ -504,7 +488,6 @@ public class Level {
         batch.end();
 
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
-        // drawShapes(unitsOnField, shapeRenderer);
         drawShapes(buildings, shapeRenderer);
         shapeRenderer.flush();
         shapeRenderer.set(ShapeRenderer.ShapeType.Filled);
@@ -529,9 +512,6 @@ public class Level {
 
     public void processCollisions(float top, float bottom, float left,
                                   float right, float timeDelta) {
-        // TODO
-        // collisions between units, buildings
-
         // between circle and square
         for (int i = 0; i < MAX_UNITS; ++i) {
             for (UnitBase unit : unitsOnField) {
@@ -654,28 +634,28 @@ public class Level {
 
     public Level loadLevel() throws IOException {
         Json serializer = new Json();
-
         BufferedReader reader = Gdx.files.local("saved.txt").reader(8192);
+        Level level = serializer.fromJson(Level.class, reader.readLine());
 
-        String savedLevel = reader.readLine();
-
-        Level level = serializer.fromJson(Level.class, savedLevel);
         for (DeadUnitsInfo info: level.deadInfo) {
-            Texture t;
+            Texture texture;
             if (info.isBlood) {
                 if (info.isBig) {
-                    t = TextureKeeper.getInstance().getBloodTexture(bigCirclesPool.Peek());
+                    texture = TextureKeeper.getInstance()
+                                .getBloodTexture(bigCirclesPool.Peek());
                 } else {
-                    t = TextureKeeper.getInstance().getBloodTexture(smallCirclesPool.Peek());
+                    texture = TextureKeeper.getInstance()
+                                .getBloodTexture(smallCirclesPool.Peek());
                 }
             } else {
-                t = TextureKeeper.getInstance().getDeadParts();
+                texture = TextureKeeper.getInstance().getDeadParts();
             }
 
-            Sprite bloodSprite = new Sprite(t, t.getWidth(), t.getHeight());
-            bloodSprite.setCenter(info.x, info.y);
-            bloodSprite.rotate(info.rotation);
-            level.blood.add(bloodSprite);
+            Sprite sprite = new Sprite(texture,
+                texture.getWidth(), texture.getHeight());
+            sprite.setPosition(info.x, info.y);
+            sprite.rotate(info.rotation);
+            level.blood.add(sprite);
         }
 
         return level;

@@ -3,16 +3,21 @@ package com.circlesvssquares.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 /**
  * Created by maximka on 12.5.16.
  */
+
 public class StartScreen implements Screen {
+    private static final int DELAY = 2500;
     private Circles_vs_Squares game;
     private boolean switcher = false;
     private BitmapFont font;
+    private Texture pegi;
+    private Texture logoLibGDX;
     private SpriteBatch batch;
 
     public StartScreen(Circles_vs_Squares game) {
@@ -20,6 +25,8 @@ public class StartScreen implements Screen {
         font = new BitmapFont(Gdx.files.internal("arial.fnt"));
         font.setColor(1, 1, 1, 1);
         batch = new SpriteBatch();
+        logoLibGDX = new Texture("libGDX.png");
+        pegi = new Texture("pegi_18.png");
     }
 
     @Override
@@ -34,15 +41,19 @@ public class StartScreen implements Screen {
 
         if (switcher) {
             try {
-                Thread.sleep(1500);
+                Thread.sleep(DELAY);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            TextureKeeper.getInstance();
+            SoundKeeper.getInstance();
             game.createScreens();
         } else {
             switcher = true;
             batch.begin();
-            font.draw(batch, "MaximKa gamedev", 420, 400);
+            font.draw(batch, "MaximKa gamedev", 420, 450);
+            batch.draw(logoLibGDX, 340, 200);
+            batch.draw(pegi, 780, 200);
             batch.end();
         }
     }
@@ -71,5 +82,7 @@ public class StartScreen implements Screen {
     public void dispose() {
         font.dispose();
         batch.dispose();
+        pegi.dispose();
+        logoLibGDX.dispose();
     }
 }
