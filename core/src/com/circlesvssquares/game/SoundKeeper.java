@@ -9,7 +9,6 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.circlesvssquares.game.game_objects.units.SmallUnitParams;
 import com.circlesvssquares.game.game_objects.units.UnitBase;
 
-import java.sql.Time;
 import java.util.Random;
 
 /**
@@ -18,7 +17,8 @@ import java.util.Random;
 public class SoundKeeper implements Disposable {
     private static final long SHOOTING_DELTA = 800000000l;   // 0.8 sec
     private static final long UNIT_SOUNDS_DELTA = 1000000000l;   // 1 sec
-    public static SoundKeeper instance = new SoundKeeper();
+
+    private static SoundKeeper instance = new SoundKeeper();
 
     private Array<Sound> smallCircleReset = new Array<Sound>();
     private Array<Sound> bigCircleReset = new Array<Sound>();
@@ -32,7 +32,9 @@ public class SoundKeeper implements Disposable {
     private Music chainsaw;
     private Sound smallShooting;
     private Sound bigShooting;
-    private long lastShootingTime = TimeUtils.nanoTime();
+
+    private long lastSmallShootingTime = TimeUtils.nanoTime();
+    private long lastBigShootingTime = TimeUtils.nanoTime();
     private long lastUnitSoundTime = TimeUtils.nanoTime();
 
     private Random generator = new Random();
@@ -76,73 +78,71 @@ public class SoundKeeper implements Disposable {
         );
     }
 
+    public static SoundKeeper getInstance() {
+        return instance;
+    }
+
     public void playShooting(UnitBase unit) {
-        if (TimeUtils.timeSinceNanos(lastShootingTime) > SHOOTING_DELTA) {
-            lastShootingTime = TimeUtils.nanoTime();
-            if (unit instanceof SmallUnitParams) {
+        if (unit instanceof SmallUnitParams) {
+            if (TimeUtils.timeSinceNanos(lastSmallShootingTime) > SHOOTING_DELTA) {
+                lastSmallShootingTime = TimeUtils.nanoTime();
                 smallShooting.play();
-            } else {
+            }
+        } else {
+            if (TimeUtils.timeSinceNanos(lastBigShootingTime) > SHOOTING_DELTA) {
+                lastBigShootingTime = TimeUtils.nanoTime();
                 bigShooting.play();
             }
         }
     }
 
     public void playSmallCircleReset() {
-        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
-            return;
+        if (!isUnitSoundPlaying()) {
+            smallCircleReset.get(
+                generator.nextInt(smallCircleReset.size)).play();
         }
-        lastUnitSoundTime = TimeUtils.nanoTime();
-
-        smallCircleReset.get(generator.nextInt(smallCircleReset.size)).play();
     }
 
     public void playBigCircleReset() {
-        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
-            return;
+        if (!isUnitSoundPlaying()) {
+            bigCircleReset.get(
+                generator.nextInt(bigCircleReset.size)).play();
         }
-        lastUnitSoundTime = TimeUtils.nanoTime();
-
-        bigCircleReset.get(generator.nextInt(bigCircleReset.size)).play();
     }
 
     public void playBigCircleAttack() {
-        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
-            return;
+        if (!isUnitSoundPlaying()) {
+            bigCircleAttack.get(
+                generator.nextInt(bigCircleAttack.size)).play();
         }
-        lastUnitSoundTime = TimeUtils.nanoTime();
-
-        bigCircleAttack.get(generator.nextInt(bigCircleAttack.size)).play();
     }
 
     public void playSmallCircleAttack() {
-        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
-            return;
+        if (!isUnitSoundPlaying()) {
+            smallCircleAttack.get(
+                generator.nextInt(smallCircleAttack.size)).play();
         }
-        lastUnitSoundTime = TimeUtils.nanoTime();
-
-        smallCircleAttack.get(generator.nextInt(smallCircleAttack.size)).play();
     }
 
     public void playSmallCircleTakingDamage() {
-        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
-            return;
+        if (!isUnitSoundPlaying()) {
+            smallCircleTakingDamage.get(
+                generator.nextInt(smallCircleTakingDamage.size)).play();
         }
-        lastUnitSoundTime = TimeUtils.nanoTime();
-
-        smallCircleTakingDamage.get(generator.nextInt(smallCircleTakingDamage.size)).play();
     }
 
     public void playSmallCircleCapture() {
-        smallCircleCapture.get(generator.nextInt(smallCircleCapture.size)).play();
+        if (!isUnitSoundPlaying()) {
+            smallCircleCapture.get(
+                generator.nextInt(smallCircleCapture.size)).play();
+        }
     }
 
     public void playSmallCircleDestroyed() {
-        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
-            return;
+        if (!isUnitSoundPlaying()) {
+            smallCircleDestroyed.get(
+                generator.nextInt(smallCircleDestroyed.size)).play();
         }
-        lastUnitSoundTime = TimeUtils.nanoTime();
-
-        smallCircleDestroyed.get(generator.nextInt(smallCircleDestroyed.size)).play();
     }
 
     public void playMoreGold() {
@@ -185,5 +185,14 @@ public class SoundKeeper implements Disposable {
         bigShooting.dispose();
         moreGold.dispose();
         chainsaw.dispose();
+    }
+
+    private boolean isUnitSoundPlaying() {
+        if (TimeUtils.timeSinceNanos(lastUnitSoundTime) <= UNIT_SOUNDS_DELTA) {
+            return true;
+        }
+
+        lastUnitSoundTime = TimeUtils.nanoTime();
+        return false;
     }
 }

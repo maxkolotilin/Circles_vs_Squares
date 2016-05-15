@@ -3,3 +3,7 @@
 3) Pretty textures
 4) Sounds
 5) New levels
+6) Help screen
+7) Android app
+8) Add textures to atlas
+9) Balance units and buildings

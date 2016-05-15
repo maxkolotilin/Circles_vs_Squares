@@ -27,7 +27,7 @@ public class UnitAttack implements Interactable {
         if (other.isAlive()) {
             if (generator.nextDouble() < DAMAGE_CHANCE) {
                 other.receiveDamage(unit.getDamagePerSecond() * timeDelta);
-                SoundKeeper.instance.playShooting(unit);
+                SoundKeeper.getInstance().playShooting(unit);
                 if (other instanceof UnitBase && !other.isAlive()) {
                     ((UnitBase) other).setMyKiller(unit);
                 }

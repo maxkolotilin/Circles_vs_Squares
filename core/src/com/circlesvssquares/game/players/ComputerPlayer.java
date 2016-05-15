@@ -13,7 +13,6 @@ import com.circlesvssquares.game.game_objects.units.UnitBase;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 

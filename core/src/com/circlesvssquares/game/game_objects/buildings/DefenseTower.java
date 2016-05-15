@@ -6,23 +6,23 @@ import com.badlogic.gdx.math.*;
 import com.circlesvssquares.game.TextureKeeper;
 import com.circlesvssquares.game.game_objects.GameObject;
 import com.circlesvssquares.game.game_objects.Party;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by maximka on 24.4.16.
  */
+
 public class DefenseTower extends Tower {
     private static final float DEFAULT_HP = 10;
     private static final float DEFAULT_DAMAGE = 2f;
     private static final float VIEW_RADIUS = 128f;
-    private Circle viewArea = new Circle();
 
+    private Circle viewArea = new Circle();
     private float damagePerSecond = DEFAULT_DAMAGE;
     private GameObject interactionTarget = null;
 
     public DefenseTower() {
         super(DEFAULT_HP);
-        sprite = new Sprite(TextureKeeper.instance.getBuilding(3),
+        sprite = new Sprite(TextureKeeper.getInstance().getBuilding(3),
             TEXTURE_SIZE, TEXTURE_SIZE);
         viewArea.radius = VIEW_RADIUS;
     }
@@ -80,7 +80,7 @@ public class DefenseTower extends Tower {
         } else if (shape instanceof Circle) {
             return viewArea.overlaps((Circle) shape);
         } else {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Unknown shape");
         }
     }
 

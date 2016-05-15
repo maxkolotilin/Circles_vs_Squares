@@ -69,7 +69,7 @@ public abstract class Player implements Serializable {
                     if (spendMoney(BUILDING_EXTEND_PRICE * buildingLevel)) {
                         touchedBuilding.setBuildingLevel(buildingLevel + 1);
                     } else if (this instanceof RealPlayer) {
-                        SoundKeeper.instance.playMoreGold();
+                        SoundKeeper.getInstance().playMoreGold();
                     }
                 }
             }
@@ -92,7 +92,7 @@ public abstract class Player implements Serializable {
                     money -= SMALL_UNIT_PRICE;
                 }
             } else if (this instanceof RealPlayer) {
-                SoundKeeper.instance.playMoreGold();
+                SoundKeeper.getInstance().playMoreGold();
             }
         }
     }

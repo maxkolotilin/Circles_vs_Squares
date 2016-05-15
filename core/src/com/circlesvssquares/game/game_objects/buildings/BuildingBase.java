@@ -12,29 +12,18 @@ import com.circlesvssquares.game.game_objects.Party;
 /**
  * Created by maximka on 18.4.16.
  */
+
 public abstract class BuildingBase extends GameObject {
     private static final long TIME_SINCE_DAMAGE = 2500000000l;    // 2.5 sec
     private static final float RESTORE_SPEED = 1f;
 
-    protected Rectangle healthBar = new Rectangle();
-    protected Rectangle partyLabel = new Rectangle();
-    protected Rectangle levelLabel = new Rectangle();
+    protected final Rectangle healthBar = new Rectangle();
+    protected final Rectangle partyLabel = new Rectangle();
+    protected final Rectangle levelLabel = new Rectangle();
 
-    protected Party captureParty = Party.NONE;
-    protected int buildingLevel;
+    private Party captureParty = Party.NONE;
     private long lastDamageTime;
-
-    @Override
-    public void write(Json json) {
-        super.write(json);
-        json.writeValue("bl", buildingLevel);
-    }
-
-    @Override
-    public void read(Json json, JsonValue jsonData) {
-        setBuildingLevel(jsonData.getInt("bl"));
-        super.read(json, jsonData);
-    }
+    protected int buildingLevel;
 
     public BuildingBase(float defaultHP) {
         super(defaultHP);
@@ -104,7 +93,7 @@ public abstract class BuildingBase extends GameObject {
         shapeRenderer.setColor(partyColor[party.ordinal()]);
 
         if (shapeRenderer.getCurrentType() == ShapeRenderer.ShapeType.Line) {
-            Gdx.gl.glLineWidth(2f);             // TODO
+            Gdx.gl.glLineWidth(2f);
             // health bar frame
             shapeRenderer.rect(healthBar.x, healthBar.y,
                 healthBar.width, healthBar.height);
@@ -167,5 +156,17 @@ public abstract class BuildingBase extends GameObject {
 
     public void setParty(Party party) {
         this.party = party;
+    }
+
+    @Override
+    public void write(Json json) {
+        super.write(json);
+        json.writeValue("bl", buildingLevel);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        setBuildingLevel(jsonData.getInt("bl"));
+        super.read(json, jsonData);
     }
 }

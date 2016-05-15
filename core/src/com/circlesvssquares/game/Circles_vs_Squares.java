@@ -1,9 +1,7 @@
 package com.circlesvssquares.game;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.utils.async.ThreadUtils;
 
 
 public class Circles_vs_Squares extends Game {
@@ -65,9 +63,12 @@ public class Circles_vs_Squares extends Game {
 
     public void dispose() {
         super.dispose();
-        TextureKeeper.instance.dispose();
+        TextureKeeper.getInstance().dispose();
+        SoundKeeper.getInstance().dispose();
+        menuScreen.dispose();
+        gameScreen.dispose();
     }
 
 }
 
-enum GameState { START_MENU, PLAY, PAUSE_MENU, END_LEVEL };
+enum GameState { START_MENU, PLAY, PAUSE_MENU, END_LEVEL }

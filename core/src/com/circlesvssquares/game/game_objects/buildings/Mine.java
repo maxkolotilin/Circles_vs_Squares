@@ -6,9 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.circlesvssquares.game.GameScreen;
 import com.circlesvssquares.game.TextureKeeper;
 import com.circlesvssquares.game.game_objects.Party;
-import com.circlesvssquares.game.players.ComputerPlayer;
 import com.circlesvssquares.game.players.Player;
-import com.circlesvssquares.game.players.RealPlayer;
 
 /**
  * Created by maximka on 24.4.16.
@@ -18,11 +16,12 @@ public class Mine extends BuildingBase {
     private static final float DEFAULT_HP = 10f;
     private static final int TEXTURE_SIZE = 80;
     private static final float MINE_SPEED = 3f;     // per second
+
     private Player player = null;
 
     public Mine() {
         super(DEFAULT_HP);
-        sprite = new Sprite(TextureKeeper.instance.getBuilding(0),
+        sprite = new Sprite(TextureKeeper.getInstance().getBuilding(0),
             TEXTURE_SIZE, TEXTURE_SIZE);
 
         levelLabel.width = 15f;
@@ -45,10 +44,8 @@ public class Mine extends BuildingBase {
     public void setParty(Party party) {
         super.setParty(party);
         if (party == Party.CIRCLES) {
-            // player = RealPlayer.getInstance();
             player = GameScreen.getCirclesPlayer();
         } else if (party == Party.SQUARES) {
-            // player = ComputerPlayer.getInstance();
             player = GameScreen.getSquaresPlayer();
         } else {
             player = null;

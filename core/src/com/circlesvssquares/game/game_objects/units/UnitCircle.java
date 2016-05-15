@@ -10,8 +10,9 @@ import com.circlesvssquares.game.game_objects.Party;
 public abstract class UnitCircle extends UnitBase {
     private Circle unitShape = new Circle();
 
-    public UnitCircle(float defaultHP, float defaultDamage, float viewRadius) {
-        super(defaultHP, defaultDamage, viewRadius);
+    public UnitCircle(float defaultHP, float defaultDamage,
+                      float defaultCaptureSpeed, float viewRadius) {
+        super(defaultHP, defaultDamage, defaultCaptureSpeed, viewRadius);
         party = Party.CIRCLES;
     }
 

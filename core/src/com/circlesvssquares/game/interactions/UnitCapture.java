@@ -25,15 +25,15 @@ public class UnitCapture implements Interactable {
                 building.setCaptureParty(unit.getParty());
             }
             if (building.getCaptureParty() == unit.getParty()) {
-                building.capture(unit.getCaptureSpeed() * timeDelta);
+                building.capture(unit.getCapturePerSecond() * timeDelta);
             }
             else {
                 // remove enemy's capture
                 unit.setInteraction(UnitAttack.getInstance());
             }
         } else {
-            unit.setInteractionTarget(null);
             unit.setInteraction(null);
+            unit.setInteractionTarget(null);
         }
     }
 }

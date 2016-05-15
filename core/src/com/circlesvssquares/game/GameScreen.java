@@ -6,8 +6,9 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.circlesvssquares.game.game_objects.Party;
@@ -35,6 +36,8 @@ public class GameScreen implements Screen {
     OrthographicCamera guiCamera;
     BitmapFont font;
     Music music;
+    Texture coins;
+    Texture clock;
 
     static RealPlayer circlesPlayer = new RealPlayer(Party.CIRCLES, null);
     static ComputerPlayer squaresPlayer = new ComputerPlayer(Party.SQUARES, null);
@@ -70,7 +73,9 @@ public class GameScreen implements Screen {
         music = Gdx.audio.newMusic(Gdx.files.internal("sounds/bg.mp3"));
         music.setVolume(0.4f);
         music.setLooping(true);
-        SoundKeeper.instance.toString();
+        SoundKeeper.getInstance().toString();
+        coins = new Texture("coins.png");
+        clock = new Texture("sand-clock.png");
 
         font = new BitmapFont(Gdx.files.internal("arial.fnt"));
         font.getData().setScale(0.75f, 0.75f);
@@ -91,25 +96,6 @@ public class GameScreen implements Screen {
         winner = party;
     }
 
-//    public void leftClick(Vector3 touchPos) {
-//        if (touchPos.y >= BOTTOM_BOARD && touchPos.y <= TOP_BOARD) {
-//            currentLevel.addUnit(Party.CIRCLES, touchPos.x,
-//                touchPos.y - SmallUnitParams.TEXTURE_SIZE / 2, LEFT_BOARD, false);
-//        }
-//    }
-//
-//    // debug
-//    public void rightClick(Vector3 touchPos) {
-//        if (touchPos.y >= BOTTOM_BOARD && touchPos.y <= TOP_BOARD) {
-//            currentLevel.addUnit(Party.SQUARES, touchPos.x,
-//                touchPos.y - SmallSquareUnit.TEXTURE_SIZE / 2,
-//                RIGHT_BOARD, false);
-//        }
-//    }
-
-
-
-
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(.85f, 1, 1, 1);
@@ -127,7 +113,9 @@ public class GameScreen implements Screen {
             isPaused = !isPaused;
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.PLUS)) {
-            game_speed *= 2;
+            if (game_speed < 8) {
+                game_speed *= 2;
+            }
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.MINUS)) {
             if (game_speed > 0.5) {
@@ -154,20 +142,16 @@ public class GameScreen implements Screen {
 
 
         currentLevel.drawBlood(batch);
-        currentLevel.drawGameObjects(batch, boardRenderer);
+//        currentLevel.drawGameObjects(batch, boardRenderer);
         //currentLevel.drawAttack(boardRenderer);
         //currentLevel.drawCapture(boardRenderer);
-        guiRenderer.begin(ShapeRenderer.ShapeType.Filled);
-//        guiRenderer.setColor(0, 0, 0, 1);
-//        guiRenderer.line(100, 50, 1180, 50);
-        guiRenderer.setColor(.85f, 1, 1, 1);
-        guiRenderer.rect(0, 0, 1280, BOTTOM_BOARD - 2);
-        guiRenderer.rect(0, TOP_BOARD + 2, 1280, 720 - TOP_BOARD);
-        guiRenderer.end();
 
         guiBatch.begin();
-        font.draw(guiBatch, circlesPlayer.getMoney() + "", 80, 50);
-        font.draw(guiBatch, squaresPlayer.getMoney() + "", 1125, 50);
+        font.draw(guiBatch, circlesPlayer.getMoney() + "", 125, 50);
+        // font.draw(guiBatch, squaresPlayer.getMoney() + "", 1125, 50);
+        guiBatch.draw(coins, 25, 10);
+        guiBatch.draw(clock, 1120, 10);
+        font.draw(guiBatch, "x" + game_speed, 1180, 50);
         guiBatch.end();
 
         if (winner != Party.NONE) {
@@ -178,6 +162,12 @@ public class GameScreen implements Screen {
         }
 
         if (isPaused || winner != Party.NONE) {
+            currentLevel.drawGameObjects(batch, boardRenderer);
+            guiRenderer.begin(ShapeRenderer.ShapeType.Filled);
+            guiRenderer.setColor(.85f, 1, 1, 1);
+            guiRenderer.rect(0, 0, 1280, BOTTOM_BOARD - 2);
+            guiRenderer.rect(0, TOP_BOARD + 2, 1280, 720 - TOP_BOARD);
+            guiRenderer.end();
             if (winner == Party.NONE) {
                 guiBatch.begin();
                 font.draw(guiBatch, "Paused. Press right CTRL to resume.", 320, 50);
@@ -194,7 +184,14 @@ public class GameScreen implements Screen {
         currentLevel.moveUnits(timeDelta);
         currentLevel.processCollisions(TOP_BOARD, BOTTOM_BOARD, LEFT_BOARD,
             RIGHT_BOARD, timeDelta);
+        currentLevel.drawGameObjects(batch, boardRenderer);
         currentLevel.performInteractions(timeDelta);
+
+        guiRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        guiRenderer.setColor(.85f, 1, 1, 1);
+        guiRenderer.rect(0, 0, 1280, BOTTOM_BOARD - 2);
+        guiRenderer.rect(0, TOP_BOARD + 2, 1280, 720 - TOP_BOARD);
+        guiRenderer.end();
     }
 
     public void saveLevel() {
@@ -287,5 +284,7 @@ public class GameScreen implements Screen {
         font.dispose();
         guiBatch.dispose();
         music.dispose();
+        coins.dispose();
+        clock.dispose();
     }
 }

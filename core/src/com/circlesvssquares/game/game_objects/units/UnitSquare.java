@@ -7,8 +7,9 @@ import com.circlesvssquares.game.game_objects.Party;
  */
 
 public abstract class UnitSquare extends UnitBase {
-    public UnitSquare(float defaultHP, float defaultDamage, float viewRadius) {
-        super(defaultHP, defaultDamage, viewRadius);
+    public UnitSquare(float defaultHP, float defaultDamage,
+                      float defaultCaptureSpeed, float viewRadius) {
+        super(defaultHP, defaultDamage, defaultCaptureSpeed, viewRadius);
         party = Party.SQUARES;
     }
 

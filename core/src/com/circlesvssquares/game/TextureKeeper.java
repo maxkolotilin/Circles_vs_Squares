@@ -1,9 +1,9 @@
 package com.circlesvssquares.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
+import com.circlesvssquares.game.game_objects.GameObject;
 import com.circlesvssquares.game.game_objects.units.BigUnitParams;
 import com.circlesvssquares.game.game_objects.units.SmallUnitParams;
 import com.circlesvssquares.game.game_objects.units.UnitBase;
@@ -13,7 +13,7 @@ import com.circlesvssquares.game.game_objects.units.UnitBase;
  */
 
 public class TextureKeeper implements Disposable {
-    public static final TextureKeeper instance = new TextureKeeper();
+    private static final TextureKeeper instance = new TextureKeeper();
 
     private Array<Texture> smallCircles = new Array<Texture>();
     private Array<Texture> bigCircles = new Array<Texture>();
@@ -26,25 +26,12 @@ public class TextureKeeper implements Disposable {
     private Texture deadParts;
 
     private TextureKeeper() {
-        smallCircles.add(new Texture("circle_100.png"));
-        smallCircles.add(new Texture(Gdx.files.internal("circle_75.png")));
-        smallCircles.add(new Texture(Gdx.files.internal("circle_50.png")));
-        smallCircles.add(new Texture(Gdx.files.internal("circle_25.png")));
-
-        smallSquares.add(new Texture(Gdx.files.internal("square_100.png")));
-        smallSquares.add(new Texture(Gdx.files.internal("square_75.png")));
-        smallSquares.add(new Texture(Gdx.files.internal("square_50.png")));
-        smallSquares.add(new Texture(Gdx.files.internal("square_25.png")));
-
-        bigCircles.add(new Texture(Gdx.files.internal("circle_big_100.png")));
-        bigCircles.add(new Texture(Gdx.files.internal("circle_big_75.png")));
-        bigCircles.add(new Texture(Gdx.files.internal("circle_big_50.png")));
-        bigCircles.add(new Texture(Gdx.files.internal("circle_big_25.png")));
-
-        bigSquares.add(new Texture(Gdx.files.internal("square_big_100.png")));
-        bigSquares.add(new Texture(Gdx.files.internal("square_big_75.png")));
-        bigSquares.add(new Texture(Gdx.files.internal("square_big_50.png")));
-        bigSquares.add(new Texture(Gdx.files.internal("square_big_25.png")));
+        for (int i = 100; i > 0; i -= 25) {
+            smallCircles.add(new Texture("circle_" + i + ".png"));
+            smallSquares.add(new Texture("square_" + i + ".png"));
+            bigCircles.add(new Texture("circle_big_" + i + ".png"));
+            bigSquares.add(new Texture("square_big_" + i + ".png"));
+        }
 
         buildings.add(new Texture("mine.png"));
         buildings.add(new Texture("base.png"));
@@ -55,6 +42,10 @@ public class TextureKeeper implements Disposable {
         smallBlood = new Texture("blood_small.png");
         bigBlood = new Texture("blood_big.png");
         deadParts = new Texture("parts.png");
+    }
+
+    public static TextureKeeper getInstance() {
+        return instance;
     }
 
     public Texture getDeadParts() {
@@ -69,7 +60,7 @@ public class TextureKeeper implements Disposable {
             return bigBlood;
         }
 
-        return null;
+        throw new GameObject.NotImplementedException("Unknown unit");
     }
 
     public Texture getSmallCircle(int index) {

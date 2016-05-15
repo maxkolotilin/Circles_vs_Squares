@@ -8,15 +8,14 @@ import com.circlesvssquares.game.TextureKeeper;
  */
 
 public class BigSquareUnit extends UnitSquare implements BigUnitParams {
-
     public BigSquareUnit() {
-        super(HP, DAMAGE, VIEW_RADIUS);
-        sprite = new Sprite(TextureKeeper.instance.getBigSquare(0), TEXTURE_SIZE,
-            TEXTURE_SIZE);
+        super(HP, DAMAGE, CAPTURE_SPEED, VIEW_RADIUS);
+        sprite = new Sprite(TextureKeeper.getInstance().getBigSquare(0),
+            TEXTURE_SIZE, TEXTURE_SIZE);
     }
 
     @Override
     public void setTexture(int index) {
-        sprite.setTexture(TextureKeeper.instance.getBigSquare(index));
+        sprite.setTexture(TextureKeeper.getInstance().getBigSquare(index));
     }
 }

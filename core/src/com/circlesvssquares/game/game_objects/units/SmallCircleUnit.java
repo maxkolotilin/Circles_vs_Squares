@@ -5,7 +5,6 @@ import com.circlesvssquares.game.SoundKeeper;
 import com.circlesvssquares.game.TextureKeeper;
 import com.circlesvssquares.game.interactions.Interactable;
 import com.circlesvssquares.game.interactions.UnitAttack;
-import com.circlesvssquares.game.interactions.UnitCapture;
 
 /**
  * Created by maximka on 18.4.16.
@@ -13,16 +12,15 @@ import com.circlesvssquares.game.interactions.UnitCapture;
 
 public class SmallCircleUnit extends UnitCircle implements SmallUnitParams {
     public SmallCircleUnit() {
-        super(HP, DAMAGE, VIEW_RADIUS);
-        sprite = new Sprite(TextureKeeper.instance.getSmallCircle(0), TEXTURE_SIZE,
-            TEXTURE_SIZE);
+        super(HP, DAMAGE, CAPTURE_SPEED, VIEW_RADIUS);
+        sprite = new Sprite(TextureKeeper.getInstance().getSmallCircle(0),
+            TEXTURE_SIZE, TEXTURE_SIZE);
     }
 
     @Override
     public void resetUnit(float x, float y) {
         super.resetUnit(x, y);
-
-        SoundKeeper.instance.playSmallCircleReset();
+        SoundKeeper.getInstance().playSmallCircleReset();
     }
 
     @Override
@@ -31,13 +29,13 @@ public class SmallCircleUnit extends UnitCircle implements SmallUnitParams {
             this.interaction == null) {
             if (interactionTarget instanceof UnitBase) {
                 if (((UnitBase) interactionTarget).getInteractionTarget() == this) {
-                    SoundKeeper.instance.playSmallCircleTakingDamage();
+                    SoundKeeper.getInstance().playSmallCircleTakingDamage();
                 }
             } else {
-                SoundKeeper.instance.playSmallCircleAttack();
+                SoundKeeper.getInstance().playSmallCircleAttack();
             }
         } else if (interactionTarget != null && interactionTarget.getParty() == party) {
-            SoundKeeper.instance.playSmallCircleCapture();
+            SoundKeeper.getInstance().playSmallCircleCapture();
         }
 
         super.setInteraction(interaction);
@@ -47,7 +45,7 @@ public class SmallCircleUnit extends UnitCircle implements SmallUnitParams {
     public boolean isAlive() {
         boolean isAlive = super.isAlive();
         if (!isAlive) {
-            SoundKeeper.instance.playSmallCircleDestroyed();
+            SoundKeeper.getInstance().playSmallCircleDestroyed();
         }
 
         return isAlive;
@@ -55,6 +53,6 @@ public class SmallCircleUnit extends UnitCircle implements SmallUnitParams {
 
     @Override
     public void setTexture(int index) {
-        sprite.setTexture(TextureKeeper.instance.getSmallCircle(index));
+        sprite.setTexture(TextureKeeper.getInstance().getSmallCircle(index));
     }
 }

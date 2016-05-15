@@ -11,25 +11,23 @@ import com.circlesvssquares.game.interactions.UnitAttack;
  */
 
 public class BigCircleUnit extends UnitCircle implements BigUnitParams {
-
     public BigCircleUnit() {
-        super(HP, DAMAGE, VIEW_RADIUS);
-        sprite = new Sprite(TextureKeeper.instance.getBigCircle(0), TEXTURE_SIZE,
+        super(HP, DAMAGE, CAPTURE_SPEED, VIEW_RADIUS);
+        sprite = new Sprite(TextureKeeper.getInstance().getBigCircle(0), TEXTURE_SIZE,
             TEXTURE_SIZE);
     }
 
     @Override
     public void resetUnit(float x, float y) {
         super.resetUnit(x, y);
-
-        SoundKeeper.instance.playBigCircleReset();
+        SoundKeeper.getInstance().playBigCircleReset();
     }
 
     @Override
     public void setInteraction(Interactable interaction) {
         if (interaction instanceof UnitAttack &&
                 this.interaction == null) {
-            SoundKeeper.instance.playBigCircleAttack();
+            SoundKeeper.getInstance().playBigCircleAttack();
         }
 
         super.setInteraction(interaction);
@@ -37,6 +35,6 @@ public class BigCircleUnit extends UnitCircle implements BigUnitParams {
 
     @Override
     public void setTexture(int index) {
-        sprite.setTexture(TextureKeeper.instance.getBigCircle(index));
+        sprite.setTexture(TextureKeeper.getInstance().getBigCircle(index));
     }
 }

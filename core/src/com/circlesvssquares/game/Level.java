@@ -8,19 +8,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Json;
-import com.circlesvssquares.game.game_objects.*;
+import com.circlesvssquares.game.game_objects.GameObject;
+import com.circlesvssquares.game.game_objects.Party;
 import com.circlesvssquares.game.game_objects.buildings.*;
 import com.circlesvssquares.game.game_objects.units.*;
-import com.circlesvssquares.game.interactions.UnitAttack;
-import com.circlesvssquares.game.interactions.UnitCapture;
 import com.circlesvssquares.game.interactions.NormalMove;
 import com.circlesvssquares.game.interactions.SlowMove;
+import com.circlesvssquares.game.interactions.UnitAttack;
+import com.circlesvssquares.game.interactions.UnitCapture;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -138,10 +139,10 @@ public class Level {
         buildings.add(f);
 
         DefenseTower dt = new DefenseTower();
-        dt.setPosition(120 + fieldWidth / 2 - 24, 376);
-        dt.setBuildingLevel(3);
-        buildings.add(dt);
-        dt = new DefenseTower();
+//        dt.setPosition(120 + fieldWidth / 2 - 24, 376);
+//        dt.setBuildingLevel(3);
+//        buildings.add(dt);
+//        dt = new DefenseTower();
         dt.setPosition(120 + fieldWidth / 2 - 24, 180);
         dt.setBuildingLevel(3);
         buildings.add(dt);
@@ -208,6 +209,10 @@ public class Level {
         st.setPosition(fieldWidth / 2 + 120 + 740, 376);
         st.setBuildingLevel(1);
         buildings.add(st);
+        st = new SupportTower();
+        st.setPosition(120 + fieldWidth / 2 - 24, 376);
+        st.setBuildingLevel(3);
+        buildings.add(st);
     }
 
     public Level() {
@@ -248,12 +253,15 @@ public class Level {
                     }
                 }
             }
+
+            unit.setDamageRatio(1);
         }
         for (BuildingBase building: buildings) {
             if (building instanceof DefenseTower) {
                 GameObject target = ((DefenseTower) building).getInteractionTarget();
                 if (target != null && !target.isAlive()) {
                     ((DefenseTower) building).setInteractionTarget(null);
+                    ((DefenseTower) building).setDamageRatio(1);
                 }
             }
         }
@@ -307,20 +315,19 @@ public class Level {
                 for (UnitBase unit : unitsOnField) {
                     if (tower.isInSupportArea(unit) &&
                             unit.getParty() == tower.getParty()) {
-                        //unit.setDamagePerSecond(tower.getSupportRatio() * 2.25f);
                         unit.setDamageRatio(tower.getSupportRatio());
                     } else {
-                        unit.setDamageRatio(1);
-                        //unit.setDamagePerSecond(2.25f);
+                        // unit.setDamageRatio(1);
                     }
                 }
                 for (BuildingBase _building : buildings) {
                     if (tower.getParty() == _building.getParty() &&
                             _building instanceof DefenseTower) {
-                        if (tower.isInSupportArea(_building)) {
+                        if (tower.isInSupportArea(_building) &&
+                                _building.getParty() == tower.getParty()) {
                             ((DefenseTower) _building).setDamageRatio(tower.getSupportRatio());
                         } else {
-                            ((DefenseTower) _building).setDamageRatio(1);
+                            // ((DefenseTower) _building).setDamageRatio(1);
                         }
                     }
                 }
@@ -449,7 +456,7 @@ public class Level {
             if (!unit.isAlive()) {
                 iter.remove();
 
-                Texture bloodTexture = TextureKeeper.instance.getBloodTexture(unit);
+                Texture bloodTexture = TextureKeeper.getInstance().getBloodTexture(unit);
                 Sprite bloodSprite = new Sprite(bloodTexture,
                     bloodTexture.getWidth(), bloodTexture.getHeight());
                 bloodSprite.setCenter(unit.getCenter().x,
@@ -460,8 +467,8 @@ public class Level {
 
                 if (unit.getMyKiller() instanceof BigUnitParams &&
                         unit instanceof SmallUnitParams) {
-                    SoundKeeper.instance.playChainsaw();
-                    Texture parts = TextureKeeper.instance.getDeadParts();
+                    SoundKeeper.getInstance().playChainsaw();
+                    Texture parts = TextureKeeper.getInstance().getDeadParts();
                     for (int i = 0; i < 2; ++i) {
                         Sprite partsSprite = new Sprite(parts,
                             parts.getWidth(), parts.getHeight());
@@ -657,12 +664,12 @@ public class Level {
             Texture t;
             if (info.isBlood) {
                 if (info.isBig) {
-                    t = TextureKeeper.instance.getBloodTexture(bigCirclesPool.Peek());
+                    t = TextureKeeper.getInstance().getBloodTexture(bigCirclesPool.Peek());
                 } else {
-                    t = TextureKeeper.instance.getBloodTexture(smallCirclesPool.Peek());
+                    t = TextureKeeper.getInstance().getBloodTexture(smallCirclesPool.Peek());
                 }
             } else {
-                t = TextureKeeper.instance.getDeadParts();
+                t = TextureKeeper.getInstance().getDeadParts();
             }
 
             Sprite bloodSprite = new Sprite(t, t.getWidth(), t.getHeight());

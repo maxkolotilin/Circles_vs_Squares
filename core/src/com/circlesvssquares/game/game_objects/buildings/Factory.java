@@ -5,18 +5,18 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.circlesvssquares.game.TextureKeeper;
 import com.circlesvssquares.game.game_objects.Party;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by maximka on 24.4.16.
  */
+
 public class Factory extends BuildingBase {
     private static final float DEFAULT_HP = 10f;
     private static final int TEXTURE_SIZE = 80;
 
     public Factory() {
         super(DEFAULT_HP);
-        sprite = new Sprite(TextureKeeper.instance.getBuilding(2),
+        sprite = new Sprite(TextureKeeper.getInstance().getBuilding(2),
             TEXTURE_SIZE, TEXTURE_SIZE);
 
         levelLabel.width = 15f;
@@ -32,13 +32,8 @@ public class Factory extends BuildingBase {
         } else if (party == Party.SQUARES) {
             return sprite.getX();
         } else {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Unknown party");
         }
-    }
-
-    @Override
-    public void interact(float timeDelta) {
-        super.interact(timeDelta);
     }
 
     @Override

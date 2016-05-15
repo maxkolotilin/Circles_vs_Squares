@@ -4,29 +4,36 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
+import com.circlesvssquares.game.game_objects.GameObject;
 import com.circlesvssquares.game.game_objects.Party;
 import com.circlesvssquares.game.interactions.*;
-import com.circlesvssquares.game.game_objects.GameObject;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by maximka on 18.4.16.
  */
 
 public abstract class UnitBase extends GameObject {
-    // TODO: One capture speed for all units?
-    private static final float CAPTURE_SPEED = 3f;
-
     private final float DEFAULT_DAMAGE;
+    private final float DEFAULT_CAPTURE_SPEED;
     private final Circle viewArea;
+
     private int currentTextureIndex;
+    private float damagePerSecond;
+    private float capturePerSecond;
 
     protected Interactable interaction = null;
-    private Movable movement = null;
+    protected Movable movement = null;
     protected GameObject interactionTarget = null;
-    private float damagePerSecond;
+    protected UnitBase myKiller = null;
 
-    private UnitBase myKiller;
+    public UnitBase(float defaultHP, float defaultDamage,
+                    float defaultCaptureSpeed, float viewRadius)
+    {
+        super(defaultHP);
+        DEFAULT_DAMAGE = defaultDamage;
+        DEFAULT_CAPTURE_SPEED = defaultCaptureSpeed;
+        viewArea = new Circle(0, 0, viewRadius);
+    }
 
     public UnitBase getMyKiller() {
         return myKiller;
@@ -34,13 +41,6 @@ public abstract class UnitBase extends GameObject {
 
     public void setMyKiller(UnitBase myKiller) {
         this.myKiller = myKiller;
-    }
-
-    public UnitBase(float defaultHP, float defaultDamage, float viewRadius)
-    {
-        super(defaultHP);
-        DEFAULT_DAMAGE = defaultDamage;
-        viewArea = new Circle(0, 0, viewRadius);
     }
 
     public GameObject getInteractionTarget() {
@@ -73,19 +73,20 @@ public abstract class UnitBase extends GameObject {
         return damagePerSecond;
     }
 
-    public float getCaptureSpeed() {
-        return CAPTURE_SPEED;
+    public float getCapturePerSecond() {
+        return capturePerSecond;
     }
 
     public void resetUnit(float x, float y) {
         healthPoints = DEFAULT_HP;
         damagePerSecond = DEFAULT_DAMAGE;
+        capturePerSecond = DEFAULT_CAPTURE_SPEED;
         currentTextureIndex = 0;
         setPosition(x, y);
         setTexture(0);
         setInteraction(null);
         setInteractionTarget(null);
-        myKiller = null;
+        setMyKiller(null);
     }
 
     public void interact(float timeDelta) {
@@ -127,7 +128,7 @@ public abstract class UnitBase extends GameObject {
         } else if (shape instanceof Circle) {
             return getViewArea().overlaps((Circle) shape);
         } else {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Unknown shape");
         }
     }
 
@@ -178,8 +179,9 @@ public abstract class UnitBase extends GameObject {
         receiveDamage(0);
         setInteraction(null);
         setInteractionTarget(null);
-        damagePerSecond = DEFAULT_DAMAGE;  // TODO
+        damagePerSecond = DEFAULT_DAMAGE;
+        capturePerSecond = DEFAULT_CAPTURE_SPEED;
     }
 
-    public abstract void setTexture(int index);  // TODO: moveto GameObject?
+    public abstract void setTexture(int index);  // TODO: move to GameObject?
 }

@@ -8,36 +8,24 @@ import com.badlogic.gdx.utils.JsonValue;
 import com.circlesvssquares.game.GameScreen;
 import com.circlesvssquares.game.TextureKeeper;
 import com.circlesvssquares.game.game_objects.Party;
-import com.circlesvssquares.game.players.ComputerPlayer;
 import com.circlesvssquares.game.players.Player;
-import com.circlesvssquares.game.players.RealPlayer;
 
 /**
  * Created by maximka on 24.4.16.
  */
+
 public class MainBase extends BuildingBase {
     private static final float DEFAULT_HP = 10;
     private static final float MINE_SPEED = 3f;
     private static final int WIDTH = 80;
     private static final int HEIGHT = 100;
+
     private Player player = null;
     private Party nativeParty;
 
-    @Override
-    public void write(Json json) {
-        super.write(json);
-        json.writeValue("np", nativeParty);
-    }
-
-    @Override
-    public void read(Json json, JsonValue jsonData) {
-        super.read(json, jsonData);
-        setNativeParty(Party.valueOf(jsonData.getString("np")));
-    }
-
     public MainBase() {
         super(DEFAULT_HP);
-        sprite = new Sprite(TextureKeeper.instance.getBuilding(1),
+        sprite = new Sprite(TextureKeeper.getInstance().getBuilding(1),
             WIDTH, HEIGHT);
 
         levelLabel.width = 15f;
@@ -59,10 +47,8 @@ public class MainBase extends BuildingBase {
         nativeParty = party;
         this.party = party;
         if (party == Party.CIRCLES) {
-            // player = RealPlayer.getInstance();
             player = GameScreen.getCirclesPlayer();
         } else if (party == Party.SQUARES) {
-            // player = ComputerPlayer.getInstance();
             player = GameScreen.getSquaresPlayer();
         } else {
             throw new IllegalArgumentException("Wrong native party");
@@ -110,5 +96,17 @@ public class MainBase extends BuildingBase {
         if (player != null && party == nativeParty) {
             player.addMoney(buildingLevel * MINE_SPEED * timeDelta);
         }
+    }
+
+    @Override
+    public void write(Json json) {
+        super.write(json);
+        json.writeValue("np", nativeParty);
+    }
+
+    @Override
+    public void read(Json json, JsonValue jsonData) {
+        setNativeParty(Party.valueOf(jsonData.getString("np")));
+        super.read(json, jsonData);
     }
 }

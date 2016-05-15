@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.Json;
 import com.badlogic.gdx.utils.JsonValue;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * Created by maximka on 18.4.16.
@@ -64,7 +63,7 @@ public abstract class GameObject implements Json.Serializable {
         return sprite.getBoundingRectangle();
     }
 
-    public boolean overlaps(GameObject other) throws NotImplementedException {
+    public boolean overlaps(GameObject other) {
         Shape2D shape_1 = getShape();
         Shape2D shape_2 = other.getShape();
 
@@ -77,7 +76,7 @@ public abstract class GameObject implements Json.Serializable {
         } else if (shape_1 instanceof Rectangle && shape_2 instanceof Circle) {
             return Intersector.overlaps((Circle) shape_2, (Rectangle) shape_1);
         } else {
-            throw new NotImplementedException();
+            throw new NotImplementedException("Unknown shape");
         }
     }
 
@@ -99,4 +98,10 @@ public abstract class GameObject implements Json.Serializable {
     }
 
     public abstract void drawShapes(ShapeRenderer shapeRenderer);
+
+    public static class NotImplementedException extends RuntimeException {
+        public NotImplementedException(String str) {
+            super(str);
+        }
+    }
 }

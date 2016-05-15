@@ -9,7 +9,7 @@ import com.circlesvssquares.game.game_objects.units.UnitBase;
 
 public class NormalMove implements Movable {
     private static NormalMove instance = new NormalMove();
-    public static final float SPEED = 100f;
+    public static final float SPEED = 75f;
 
     private NormalMove() { }
 

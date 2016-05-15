@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 /**
  * Created by maximka on 24.4.16.
  */
+
 public abstract class Tower extends BuildingBase {
     protected static final int TEXTURE_SIZE = 48;
     private Circle towerShape = new Circle();
